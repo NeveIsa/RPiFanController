@@ -23,3 +23,13 @@ echo "--------------------------------"
 echo "Installing python-raspberry-gpio"
 echo "--------------------------------"
 yay -S python-raspberry-gpio
+
+echo "---------------------------------"
+echo "Installing from pip using req.txt"
+echo "---------------------------------"
+pip install -r req.txt
+
+echo "---------------------------------"
+echo "Adding $USER to i2c group"
+echo "---------------------------------"
+adduser $USER i2c
