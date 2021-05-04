@@ -60,9 +60,11 @@ def simple_fan_control(current_temp,temp_setpoint=40):
     # if temp drops below setpoint by 6 degrees
     elif diff < -6:
         __speed = 0
+        
+    # reduce speed slowly
     else:
-        __speed -= 5
-        if __speed <= 0: __speed+=5
+        __speed -= 1
+        if __speed <= 0: __speed+=1
         
     fan_speed(__speed)
 
