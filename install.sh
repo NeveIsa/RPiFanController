@@ -42,13 +42,16 @@ sudo cp pifan.service /etc/systemd/system
 echo "---------------------------------"
 echo "Enabling pifan.service"
 echo "---------------------------------"
-systemctl enable pifan
+sudo systemctl enable pifan
 
 
 echo "---------------------------------"
-echo "Rebooting"
+echo "Starting pifan.service"
 echo "---------------------------------"
-sudo reboot
+sudo systemctl start pifan
+sleep 3
+sudo systemctl status pifan
+
 
 
 
