@@ -33,3 +33,22 @@ echo "---------------------------------"
 echo "Adding $USER to i2c group"
 echo "---------------------------------"
 adduser $USER i2c
+
+echo "---------------------------------"
+echo "Adding pifan service"
+echo "---------------------------------"
+sudo cp pifan.service /etc/systemd/system
+
+echo "---------------------------------"
+echo "Enabling pifan.service"
+echo "---------------------------------"
+systemctl enable pifan
+
+
+echo "---------------------------------"
+echo "Rebooting"
+echo "---------------------------------"
+sudo reboot
+
+
+

@@ -1,0 +1,12 @@
+
+# copy this to /etc/systemd/system 
+# also chmod 755 control.py
+
+[Unit]
+Description=pifan
+
+[Service]
+ExecStart=/home/sampad/RPiFanController/control.py
+
+[Install]
+WantedBy=multi-user.target
