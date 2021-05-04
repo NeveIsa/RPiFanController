@@ -84,11 +84,18 @@ if __name__ == "__main__":
 
     DAC = MCP4725(address=0x61, busnum=1)
     
+    count=0
     while True:
         try:
             temp = sense_temp()
             speed = controller(temp)            
-            print(f'temp->{temp}\tspeed->{speed}')
+            msg = f'temp->{temp}\tspeed->{speed}'
+            print(msg)
+            if count%30==0:
+                os.system(f'echo "{msg}" | systemd-cat')
+                count=0
+
+            count+=1
             time.sleep(1)
         except Exception as e:
             print('Exception ->', e)
