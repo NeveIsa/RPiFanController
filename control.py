@@ -29,10 +29,11 @@ def get_wifi():
 
 
 __last_volts=-1
+
 def fan_speed(val):
     global __last_volts
     
-    BASE_SPEED = 700
+    BASE_SPEED = 705
     SPEED_RANGE = 200
     
     #check if val in 0 to 100
@@ -44,7 +45,18 @@ def fan_speed(val):
     # stop if val==0
     if val==0: volts=0
 
+    if __last_volts==0 and val!=0:
+        cycle_inc = list(range(BASE_SPEED,BASE_SPEED+SPEED_RANGE))
+        cycle_dec = list(range(BASE_SPEED+SPEED_RANGE, BASE_SPEED, -1))
+
+        cycle = cycle_inc + cycle_dec
+
+        for c in cycle:
+            DAC.set_voltage(c)
+            time.sleep(0.01)
+
     if __last_volts!=volts:
+        print(f'fan level: {volts}/4096')
         DAC.set_voltage(volts)
         __last_volts = volts
 
@@ -55,7 +67,7 @@ def simple_fan_control(current_temp,temp_setpoint=40):
 
     if diff > 0:
         # speed inc. 10 per degree celsius
-        __speed = diff*10 
+        __speed = diff*5
 
     # if temp drops below setpoint by 6 degrees
     elif diff < -6:
@@ -76,18 +88,35 @@ if __name__ == "__main__":
     #ssid,passwd=get_wifi()
     #print(f'Connected @ {ssid}')
 
+    DAC = MCP4725(address=0x61, busnum=1)
+
+
+    # CYCLE FAN
+    for _ in range(100):
+        fan_speed(_)
+        time.sleep(0.02)
+    for _ in range(100,0,-1):
+        fan_speed(_)
+        time.sleep(0.02)
+    
     # get setpoint
     TEMP_SETPOINT = 40
     if len(sys.argv)>1:
         TEMP_SETPOINT = int(sys.argv[1])
     controller = partial(simple_fan_control, temp_setpoint=TEMP_SETPOINT)    
 
-    DAC = MCP4725(address=0x61, busnum=1)
     
     count=0
     while True:
         try:
             temp = sense_temp()
+            time.sleep(1)
+            temp += sense_temp()
+            time.sleep(1)
+            temp += sense_temp()
+            time.sleep(1)
+            temp /=3
+            
             speed = controller(temp)            
             msg = f'temp->{temp}\tspeed->{speed}'
             print(msg)
@@ -96,7 +125,6 @@ if __name__ == "__main__":
                 count=0
 
             count+=1
-            time.sleep(1)
         except Exception as e:
             print('Exception ->', e)
             raise
